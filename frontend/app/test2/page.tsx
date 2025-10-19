@@ -34,19 +34,40 @@ export default function Test2Page() {
         setRawData(null);
 
         try {
-            const res = await fetch("https://dapurbuzzer-api.kodekreatifdigital.id/api/sprintpedia", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username }),
-            });
+            console.log("🚀 Fetching from Laravel API:", username);
 
-            if (!res.ok) throw new Error("Gagal mengambil data dari API.");
+            const res = await fetch(
+                "https://dapurbuzzer-api.kodekreatifdigital.id/api/sprintpedia",
+                {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ username }),
+                }
+            );
 
-            const json = await res.json();
+            // Ambil teks mentah dulu (biar bisa debug kalau bukan JSON)
+            const text = await res.text();
+            let json: any;
 
-            if (!json?.data?.username) throw new Error("Data tidak ditemukan.");
+            try {
+                json = JSON.parse(text);
+            } catch (err) {
+                throw new Error("Response bukan JSON valid:\n" + text.substring(0, 200));
+            }
+
+            if (!res.ok) {
+                throw new Error(json.error || "Gagal mengambil data dari API Laravel.");
+            }
+
+            if (!json?.data?.username) {
+                throw new Error("Data tidak ditemukan untuk username ini.");
+            }
 
             const data = json.data;
+
             setProfile({
                 username: data.username,
                 full_name: data.full_name || "-",
@@ -54,14 +75,16 @@ export default function Test2Page() {
                 following_count: data.following_count || 0,
                 media_count: data.media_count || 0,
                 biography: data.biography || "",
-                profile_pic_url_hd: data.profile_pic_url_hd || data.profile_pic_url,
-                is_private: data.is_private || false,
-                is_verified: data.is_verified || false,
+                profile_pic_url_hd:
+                    data.profile_pic_url_hd || data.profile_pic_url || "",
+                is_private: !!data.is_private,
+                is_verified: !!data.is_verified,
             });
+
             setRawData(json);
         } catch (err: any) {
             console.error("❌ Error:", err);
-            setError(err.message || "Terjadi kesalahan.");
+            setError(err.message || "Terjadi kesalahan tak terduga.");
         } finally {
             setLoading(false);
         }
@@ -69,16 +92,16 @@ export default function Test2Page() {
 
     return (
         <main className="min-h-screen bg-gradient-to-b from-white to-purple-50 py-12 px-4 flex flex-col items-center">
-            {/* 🔹 Header */}
+            {/* Header */}
             <h1 className="text-3xl font-bold text-purple-700 mb-2 text-center">
                 🧪 Test 2 – Sprintpedia REST API Simulation
             </h1>
             <p className="text-gray-600 mb-8 text-center max-w-xl">
                 Masukkan username Instagram untuk menampilkan informasi akun dari{" "}
-                <b>Sprintpedia Proxy API</b> secara langsung.
+                <b>Sprintpedia Proxy API</b> melalui server Laravel.
             </p>
 
-            {/* 🔹 Input Form */}
+            {/* Input */}
             <div className="flex gap-2 w-full max-w-md mb-10">
                 <TextInput
                     placeholder="Masukkan username IG (tanpa @)"
@@ -96,25 +119,23 @@ export default function Test2Page() {
                 </Button>
             </div>
 
-            {/* 🔹 Error Message */}
+            {/* Error */}
             {error && (
-                <div className="text-red-600 bg-red-50 border border-red-200 px-4 py-2 rounded-md mb-6">
+                <div className="text-red-600 bg-red-50 border border-red-200 px-4 py-2 rounded-md mb-6 max-w-md text-center">
                     {error}
                 </div>
             )}
 
-            {/* 🔹 Profile Card */}
+            {/* Profile */}
             {profile && (
                 <Card className="w-full max-w-md shadow-lg border border-purple-100">
                     <div className="flex flex-col items-center text-center">
-                        {/* Foto dihapus agar tidak error */}
-
                         <h2 className="text-xl font-semibold text-gray-800">
                             {profile.full_name}
                         </h2>
                         <p className="text-purple-600">@{profile.username}</p>
 
-                        {/* 🔹 Stats */}
+                        {/* Stats */}
                         <div className="flex justify-center gap-8 mt-4">
                             <div>
                                 <p className="font-bold text-purple-700 text-lg">
@@ -136,14 +157,14 @@ export default function Test2Page() {
                             </div>
                         </div>
 
-                        {/* 🔹 Bio */}
+                        {/* Bio */}
                         {profile.biography && (
                             <p className="text-gray-600 mt-4 text-sm italic">
                                 “{profile.biography}”
                             </p>
                         )}
 
-                        {/* 🔹 Private & Spam Filter */}
+                        {/* Flags */}
                         <div className="flex flex-wrap justify-center items-center gap-6 mt-6">
                             <div className="flex items-center gap-2">
                                 <span className="text-gray-700 font-medium">Status Private:</span>
@@ -177,7 +198,7 @@ export default function Test2Page() {
                 </Card>
             )}
 
-            {/* 🔹 Raw JSON Debug */}
+            {/* Raw JSON Debug */}
             {rawData && (
                 <details className="max-w-md w-full mt-6 bg-white border border-gray-200 rounded-md shadow-sm">
                     <summary className="cursor-pointer px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-t-md">
@@ -189,7 +210,7 @@ export default function Test2Page() {
                 </details>
             )}
 
-            {/* 🔹 Footer */}
+            {/* Footer */}
             <footer className="mt-16 text-gray-500 text-sm text-center">
                 Data diambil dari{" "}
                 <a

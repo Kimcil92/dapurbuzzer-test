@@ -10,7 +10,7 @@
 
 ## Link Demo :
 
--   https://api.dapurbuzzer-test.kodekreatifdigital.id/
+-   https://dapurbuzzer-api.kodekreatifdigital.id/
 
 ## Tech Stack : 
 

@@ -46,7 +46,7 @@
 
 ### 1️⃣ Clone this repository
 ```bash
-git clone https://github.com/username/dapurbuzzer-test.git
+git clone https://github.com/Kimcil92/dapurbuzzer-test.git
 cd dapurbuzzer-test/frontend
 ```
 

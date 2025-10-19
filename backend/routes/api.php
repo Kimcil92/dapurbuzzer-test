@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BannerController;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/test-connection', function (\Illuminate\Http\Request $request) {
@@ -19,14 +19,36 @@ Route::post('/sprintpedia', function (Request $request) {
     $username = $request->input('username');
 
     if (!$username) {
-        return response()->withCors(['error' => 'Username required'], 400);
+        return response()->json(['error' => 'Username required'], 400)
+            ->header('Access-Control-Allow-Origin', 'https://dapurbuzzer-test.kodekreatifdigital.id')
+            ->header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     }
 
-    $response = Http::post('https://sprintpedia-proxy.vercel.app/api/sprintpedia', [
-        'username' => $username,
-    ]);
+    try {
+        // 🔹 Laravel yang panggil Sprintpedia
+        $response = Http::post('https://sprintpedia-proxy.vercel.app/api/sprintpedia', [
+            'username' => $username,
+        ]);
 
-    return response()->withCors($response->json());
+        // 🔹 Kembalikan hasil ke frontend dengan CORS header dari Laravel sendiri
+        return response()->json($response->json(), $response->status())
+            ->header('Access-Control-Allow-Origin', 'https://dapurbuzzer-test.kodekreatifdigital.id')
+            ->header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    } catch (\Throwable $th) {
+        return response()->json(['error' => 'Gagal terhubung ke Sprintpedia: ' . $th->getMessage()], 500)
+            ->header('Access-Control-Allow-Origin', 'https://dapurbuzzer-test.kodekreatifdigital.id')
+            ->header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    }
+});
+
+Route::options('/sprintpedia', function () {
+    return response('', 204)
+        ->header('Access-Control-Allow-Origin', 'https://dapurbuzzer-test.kodekreatifdigital.id')
+        ->header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 });
 
 Route::get('/banners', [BannerController::class, 'index']);
