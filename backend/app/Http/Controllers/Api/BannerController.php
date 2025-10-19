@@ -1,0 +1,91 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Services\BannerService;
+use Illuminate\Http\Request;
+
+class BannerController extends Controller
+{
+    protected BannerService $bannerService;
+
+    public function __construct(BannerService $bannerService)
+    {
+        $this->bannerService = $bannerService;
+    }
+
+    public function index()
+    {
+        $banners = $this->bannerService->getAll();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'List of banners',
+            'data' => $banners,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $banner = $this->bannerService->store($request);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Banner created successfully',
+            'data' => $banner,
+        ], 201);
+    }
+
+    public function show(string $id)
+    {
+        $banner = $this->bannerService->findById($id);
+
+        if (!$banner) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Banner not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'data' => $banner,
+        ]);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $banner = $this->bannerService->update($request, $id);
+
+        if (!$banner) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Banner not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Banner updated successfully',
+            'data' => $banner,
+        ]);
+    }
+
+    public function destroy(string $id)
+    {
+        $deleted = $this->bannerService->destroy($id);
+
+        if (!$deleted) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Banner not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Banner deleted successfully',
+        ]);
+    }
+}

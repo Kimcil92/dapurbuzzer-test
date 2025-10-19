@@ -1,0 +1,116 @@
+<?php
+
+namespace App\Services;
+
+use Illuminate\Http\Request;
+use App\Models\Banner;
+use Illuminate\Support\Facades\Storage;
+
+class BannerService
+{
+    /**
+     * Ambil semua banner.
+     */
+    public function getAll()
+    {
+        return Banner::where('status', true)
+            ->orderByDesc('created_at')
+            ->get(['id', 'title', 'image', 'link', 'status']);
+    }
+
+    /**
+     * Simpan banner baru.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'link' => 'nullable|url|max:255',
+            'status' => 'boolean',
+        ]);
+
+        // 🔹 Wajib salah satu diisi
+        if (!$request->hasFile('image') && empty($request->image_url)) {
+            return response()->json([
+                'message' => 'Harap upload gambar atau masukkan URL gambar.'
+            ], 422);
+        }
+
+        // 🔹 Simpan gambar jika upload file
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('banners', 'public');
+        }
+        // 🔹 Jika tidak ada file tapi ada URL
+        elseif (!empty($request->image_url)) {
+            $validated['image'] = $request->image_url;
+        }
+
+        // 🔹 Buat data banner
+        $banner = Banner::create([
+            'title' => $validated['title'],
+            'image' => $validated['image'],
+            'status' => $validated['status'] ?? 1,
+            'link' => $request->link ?? null, // kalau nanti ada field link halaman
+        ]);
+
+        return response()->json([
+            'message' => 'Banner berhasil ditambahkan',
+            'data' => $banner
+        ], 201);
+    }
+
+    /**
+     * Ambil detail banner.
+     */
+    public function findById(string $id)
+    {
+        return Banner::find($id);
+    }
+
+    /**
+     * Update banner.
+     */
+    public function update(Request $request, string $id)
+    {
+        $banner = Banner::find($id);
+        if (!$banner) {
+            return null;
+        }
+
+        $validated = $request->validate([
+            'title' => 'nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'link' => 'nullable|url|max:255',
+            'status' => 'boolean',
+        ]);
+
+        if ($request->hasFile('image')) {
+            if ($banner->image && Storage::disk('public')->exists($banner->image)) {
+                Storage::disk('public')->delete($banner->image);
+            }
+            $validated['image'] = $request->file('image')->store('banners', 'public');
+        }
+
+        $banner->update($validated);
+        return $banner;
+    }
+
+    /**
+     * Hapus banner.
+     */
+    public function destroy(string $id)
+    {
+        $banner = Banner::find($id);
+        if (!$banner) {
+            return false;
+        }
+
+        if ($banner->image && Storage::disk('public')->exists($banner->image)) {
+            Storage::disk('public')->delete($banner->image);
+        }
+
+        $banner->delete();
+        return true;
+    }
+}
