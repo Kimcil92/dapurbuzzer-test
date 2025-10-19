@@ -7,11 +7,11 @@ by **Deden Setiawan**
 
 ## 📎 Repository & Demo
 
-| Item                 | Link                                                                                                       |
-| -------------------- | ---------------------------------------------------------------------------------------------------------- |
-| 🧩 GitHub Repository | [https://github.com/kimcil92/dapurbuzzer-test](https://github.com/kimcil92/dapurbuzzer-test)               |
-| 🌐 Api URL           | [https://api.dapurbuzzer-test.kodekreatifdigital.id/](https://api.dapurbuzzer-test.kodekreatifdigital.id/) |
-| 🌐 Live Demo         | [https://dapurbuzzer-test.kodekreatifdigital.id/](https://dapurbuzzer-test.kodekreatifdigital.id/)         |
+| Item                 | Link                                                                                               |
+| -------------------- | -------------------------------------------------------------------------------------------------- |
+| 🧩 GitHub Repository | [https://github.com/kimcil92/dapurbuzzer-test](https://github.com/kimcil92/dapurbuzzer-test)       |
+| 🌐 Api URL           | [https://dapurbuzzer-api.kodekreatifdigital.id/](https://dapurbuzzer-api.kodekreatifdigital.id/)   |
+| 🌐 Live Demo         | [https://dapurbuzzer-test.kodekreatifdigital.id/](https://dapurbuzzer-test.kodekreatifdigital.id/) |
 
 ---
 

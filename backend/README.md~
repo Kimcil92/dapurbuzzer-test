@@ -6,11 +6,11 @@
 
 ## Link Repository :
 
--   https://github.com/username/dapurbuzzer-test
+-   https://github.com/Kimcil92/dapurbuzzer-test
 
 ## Link Demo :
 
--   https://dapurbuzzer-test.vercel.app/
+-   https://api.dapurbuzzer-test.kodekreatifdigital.id/
 
 ## Tech Stack : 
 
@@ -62,12 +62,4 @@ php artisan schedule:run
 
 ```bash
 php artisan serve
-```
-
-
-- untuk node module di dalam wa service
-
-```bash
-cd wa-service
-npm install
 ```
