@@ -1,24 +1,33 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import api from "@/lib/axios";
 import Swal from "sweetalert2";
-import { useRouter, useParams } from "next/navigation";
+
+// Tipe form
+interface BannerForm {
+    title: string;
+    link: string;
+    image: File | null;
+    status: boolean;
+    currentImage: string;
+}
 
 export default function EditBanner() {
     const router = useRouter();
-    const params = useParams();
-    const bannerId = params.id as string;
+    const pathname = usePathname();
+    const bannerId = pathname.split("/").pop() || ""; // Ambil ID dari URL manual
 
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<BannerForm>({
         title: "",
         link: "",
-        image: null as File | null,
+        image: null,
         status: true,
         currentImage: "",
     });
 
     const [preview, setPreview] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState<boolean>(true);
 
     // 🔹 Ambil data banner
     const fetchBanner = async () => {
@@ -37,9 +46,8 @@ export default function EditBanner() {
             if (data.image?.startsWith("http")) {
                 setPreview(data.image);
             } else {
-                setPreview(
-                    `${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "/storage/")}${data.image}`
-                );
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
+                setPreview(`${apiUrl.replace("/api", "/storage/")}${data.image}`);
             }
         } catch (err) {
             Swal.fire("Error", "Gagal mengambil data banner.", "error");
@@ -50,24 +58,27 @@ export default function EditBanner() {
     };
 
     useEffect(() => {
-        fetchBanner();
-    }, []);
+        if (bannerId) fetchBanner();
+    }, [bannerId]);
 
     // 🔹 Handle input umum
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
-        setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+        setForm((prev) => ({
+            ...prev,
+            [name]: type === "checkbox" ? checked : value,
+        }));
 
         if (name === "link" && value.startsWith("http")) {
             setPreview(value);
-            setForm((prev) => ({ ...prev, image: null })); // kosongkan file
+            setForm((prev) => ({ ...prev, image: null }));
         }
     };
 
     // 🔹 Handle upload file baru
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
-        setForm({ ...form, image: file, link: "" });
+        setForm((prev) => ({ ...prev, image: file, link: "" }));
         if (file) {
             const reader = new FileReader();
             reader.onload = () => setPreview(reader.result as string);
@@ -78,7 +89,7 @@ export default function EditBanner() {
     };
 
     // 🔹 Submit update
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
         if (!form.image && !form.link && !form.currentImage) {

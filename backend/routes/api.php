@@ -2,16 +2,32 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BannerController;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
-//Route::get('/test-connection', function (\Illuminate\Http\Request $request) {
-//    Log::info('✅ Test connection received', ['headers' => $request->headers->all()]);
-//    return response()->json(['message' => 'Connection OK']);
-//});
+Route::get('/test-connection', function (\Illuminate\Http\Request $request) {
+    Log::info('✅ Test connection received', ['headers' => $request->headers->all()]);
+    return response()->json(['message' => 'Connection OK']);
+});
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::post('/sprintpedia', function (Request $request) {
+    $username = $request->input('username');
+
+    if (!$username) {
+        return response()->withCors(['error' => 'Username required'], 400);
+    }
+
+    $response = Http::post('https://sprintpedia-proxy.vercel.app/api/sprintpedia', [
+        'username' => $username,
+    ]);
+
+    return response()->withCors($response->json());
+});
 
 Route::get('/banners', [BannerController::class, 'index']);
 

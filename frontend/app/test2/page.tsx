@@ -34,7 +34,7 @@ export default function Test2Page() {
         setRawData(null);
 
         try {
-            const res = await fetch("/api/sprintpedia", {
+            const res = await fetch("https://dapurbuzzer-api.kodekreatifdigital.id/api/sprintpedia", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username }),

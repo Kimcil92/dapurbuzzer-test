@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // Penting: agar bisa export ke static hosting (tanpa Node)
     output: 'export',
 
-    // Menonaktifkan image optimizer bawaan (karena butuh server Node)
     images: {
         unoptimized: true,
         remotePatterns: [
@@ -27,13 +25,17 @@ const nextConfig = {
             {
                 protocol: 'https',
                 hostname: 'app.dapurbuzzer.co.id',
-            }
+            },
         ],
     },
 
     trailingSlash: true,
 
+
+    basePath: '',
     assetPrefix: './',
+
+    reactStrictMode: false,
 };
 
 module.exports = nextConfig;
