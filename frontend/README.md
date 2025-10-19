@@ -10,7 +10,7 @@
 - https://github.com/kimcil92/dapurbuzzer-test
 
 ## 🌐 Link Demo :
-- https://dapurbuzzer-test.vercel.app/
+- https://dapurbuzzer-test.kodekreatifdigital.id/
 
 ---
 
