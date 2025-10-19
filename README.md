@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🚀 Dapur Buzzer & Sprintpedia API Simulation
 **Submission Test 1 & 2 – Full Stack Developer**  
 by **Deden Setiawan**
@@ -114,3 +115,6 @@ Full Stack Developer – Laravel & Next.js
 📧 Email: dedenjapan@gmail.com
 
 🌐 https://github.com/kimcil92
+=======
+# dapurbuzzer-test
+>>>>>>> 4bf99a6aa381df8812ed52d6309f1ea615c51081
