@@ -1,17 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    // Penting: agar bisa export ke static hosting (tanpa Node)
+    output: 'export',
+
+    // Menonaktifkan image optimizer bawaan (karena butuh server Node)
     images: {
+        unoptimized: true,
         remotePatterns: [
             {
-                protocol: 'http',
-                hostname: '127.0.0.1',
-                port: '8000',
-                pathname: '/storage/**',
-            },
-            {
-                protocol: 'http',
-                hostname: 'localhost',
-                port: '8000',
+                protocol: 'https',
+                hostname: 'dapurbuzzer-api.kodekreatifdigital.id',
                 pathname: '/storage/**',
             },
             {
@@ -23,15 +21,19 @@ const nextConfig = {
                 hostname: 'scontent.cdninstagram.com',
             },
             {
-                protocol: "https",
-                hostname: "dapurbuzzer.co.id",
+                protocol: 'https',
+                hostname: 'dapurbuzzer.co.id',
             },
             {
-                protocol: "https",
-                hostname: "app.dapurbuzzer.co.id",
-            },
+                protocol: 'https',
+                hostname: 'app.dapurbuzzer.co.id',
+            }
         ],
     },
+
+    trailingSlash: true,
+
+    assetPrefix: './',
 };
 
 module.exports = nextConfig;

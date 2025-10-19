@@ -1,6 +1,7 @@
 {
   "name": "dapurbuzzer-next",
   "version": "0.1.0",
+  "homepage": "https://dapurbuzzer-test.kodekreatifdigital.id/",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
