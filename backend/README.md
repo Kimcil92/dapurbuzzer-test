@@ -6,11 +6,11 @@
 
 ## Link Repository :
 
--   https://github.com/username/dapurbuzzer-test
+-   https://github.com/Kimcil92/dapurbuzzer-test
 
 ## Link Demo :
 
--   https://dapurbuzzer-test.vercel.app/
+-   https://api.dapurbuzzer-test.kodekreatifdigital.id/
 
 ## Tech Stack : 
 
